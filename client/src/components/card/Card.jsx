@@ -4,8 +4,27 @@ import HeartFilled from "../../assets/img/heartFilled.svg";
 import Comment from "../../assets/img/comment.svg";
 import Share from "../../assets/img/share.svg";
 import Info from "../../assets/img/info.svg";
+import { useState } from "react";
 
-const Card = ({ post }) => {
+const Card = ({ post, socket, user }) => {
+	const [liked, setLiked] = useState(false);
+
+	const handleNotification = (type) => {
+		setLiked(true);
+
+		socket.emit("sendNotification", {
+			senderName: user,
+			receiverName: post.username,
+			type,
+		});
+	};
+	const handleMsg = () => {
+		socket.emit("sendText", {
+			senderName: user,
+			receiverName: post.username,
+			text: "hello this is chat message",
+		});
+	};
 	return (
 		<div className={styles.card}>
 			<div className={styles.info}>
@@ -14,9 +33,28 @@ const Card = ({ post }) => {
 			</div>
 			<img src={post.postImg} alt="" className={styles.postImg} />
 			<div className={styles.interaction}>
-				<img src={Heart} alt="" className={styles.cardIcon} />
-				<img src={Comment} alt="" className={styles.cardIcon} />
-				<img src={Share} alt="" className={styles.cardIcon} />
+				{liked ? (
+					<img src={HeartFilled} alt="" className={styles.cardIcon} />
+				) : (
+					<img
+						src={Heart}
+						alt=""
+						className={styles.cardIcon}
+						onClick={() => handleNotification(1)}
+					/>
+				)}
+				<img
+					src={Comment}
+					alt=""
+					className={styles.cardIcon}
+					onClick={() => handleMsg()}
+				/>
+				<img
+					src={Share}
+					alt=""
+					className={styles.cardIcon}
+					//onClick={() => handleNotification(3)}
+				/>
 				<img
 					src={Info}
 					alt=""
